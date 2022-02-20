@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "FindingMeals",
+    "slug": "FindingMeals",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
