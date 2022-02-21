@@ -5,6 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import styles from './components/styles/styles';
 import { FontAwesome } from "@expo/vector-icons";
+import { AntDesign } from '@expo/vector-icons';
 
 import { firebase } from './components/fbconfig/config'
 
@@ -12,7 +13,7 @@ function HomeScreen({navigation}) {
 
     return (
       <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
+        <Text>this is the home page</Text>
         <StatusBar style="auto" />
 
         <TouchableOpacity
@@ -76,21 +77,50 @@ function SearchScreen({navigation}) {
           .doc(entity.id)
           .delete()
           .then(() => {
-            alert("Ingredient Deleted")
+            // alert("Ingredient Deleted")
           })
           .catch(error => {
             alert(error);
           })
     }
 
+    const onTextEdit = (entity) => {
+      alert('onTextEdit called')
+      //if (entityText && entityText.length > 0) {
+        const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+      // alert('update called');
+        entityRef
+          .doc(entity.id)
+          .set({
+            text: item,
+            createdAt: timestamp
+          })
+          .then(() => {
+            alert('Ingredient Updated')
+          })
+          .catch(error => {
+            alert(error);
+          })
+      //}
+    }
+
+
     const renderEntity = ({item}) => {
       return (
-        <View style={styles.entityContainer}>
-          <Text style={styles.entityText}>
-              {item.text}
-          </Text>
+        <View 
+          style={styles.entityContainer}
+        >
+          <TextInput style={styles.entityText}
+            //onChangeText={}
+            //value={item.text}
+            onChangeText={(text) => setEntityText(text)}
+            onSubmitEditing={() => {onAddButtonPress(item); onDeleteButtonPress(item)}}
+          >
+           {item.text}   
+          </TextInput>
           <View style={styles.textIcons}>
             <FontAwesome name="trash-o" color="red" onPress={() => onDeleteButtonPress(item)} style={styles.todoIcon} />
+            <AntDesign name="edit" color="black" onPress={() => { onAddButtonPress; onDeleteButtonPress(item)}} style={styles.todoIcon} />
            </View>
         </View>
       )

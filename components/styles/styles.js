@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { BoolifiedDeprecatedImageStylePropTypes, borderColor } from "react-native/Libraries/Components/View/ReactNativeStyleAttributes";
 
 const styles = StyleSheet.create({
     container: {
@@ -75,7 +76,7 @@ const styles = StyleSheet.create({
     todoIcon:{
         marginTop:5,
         fontSize:20,
-        marginLeft:14,
+        marginLeft:10,
     },
 
   });
