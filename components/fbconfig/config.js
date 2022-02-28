@@ -17,3 +17,5 @@ if (!firebase.apps.length) {
 }
 
 export { firebase };
+
+// https://console.firebase.google.com/u/3/project/findingmeals-3c3ae/overview

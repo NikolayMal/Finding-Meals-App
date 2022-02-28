@@ -54,6 +54,7 @@ const styles = StyleSheet.create({
     listContainer: {
         marginTop: 20,
         padding: 20,
+        paddingBottom: '10%',
     },
     entityContainer: {
         marginTop: 16,
@@ -77,6 +78,17 @@ const styles = StyleSheet.create({
         marginTop:5,
         fontSize:20,
         marginLeft:10,
+    },
+    submitIngredients:{
+        position: 'absolute',
+        bottom:0,
+        alignItems: "center",
+        justifyContent: 'center',
+        paddingBottom: 20,
+        paddingTop: 10,
+        backgroundColor: '#cccccc',
+        width:"100%",
+        
     },
 
   });

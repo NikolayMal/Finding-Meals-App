@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, Keyboard } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, Keyboard, Button } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
@@ -26,7 +26,7 @@ function HomeScreen({navigation}) {
     )
 }
 
-function SearchScreen({navigation}) {
+function SearchScreen() {
 
   const [entityText, setEntityText] = useState('')
   const [entities, setEntities] = useState([])
@@ -84,48 +84,28 @@ function SearchScreen({navigation}) {
           })
     }
 
-    const onTextEdit = (entity) => {
-      alert('onTextEdit called')
-      //if (entityText && entityText.length > 0) {
-        const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-      // alert('update called');
-        entityRef
-          .doc(entity.id)
-          .set({
-            text: item,
-            createdAt: timestamp
-          })
-          .then(() => {
-            alert('Ingredient Updated')
-          })
-          .catch(error => {
-            alert(error);
-          })
-      //}
-    }
-
-
     const renderEntity = ({item}) => {
       return (
         <View 
           style={styles.entityContainer}
         >
           <TextInput style={styles.entityText}
-            //onChangeText={}
-            //value={item.text}
             onChangeText={(text) => setEntityText(text)}
             onSubmitEditing={() => {onAddButtonPress(item); onDeleteButtonPress(item)}}
+            blurOnSubmit={false}
           >
            {item.text}   
           </TextInput>
           <View style={styles.textIcons}>
             <FontAwesome name="trash-o" color="red" onPress={() => onDeleteButtonPress(item)} style={styles.todoIcon} />
-            <AntDesign name="edit" color="black" onPress={() => { onAddButtonPress; onDeleteButtonPress(item)}} style={styles.todoIcon} />
            </View>
         </View>
       )
-  }
+    }
 
+    const submitIngredients = () => {
+      alert("Searching for Recipes")
+    }
 
     return (
       <>
@@ -140,8 +120,8 @@ function SearchScreen({navigation}) {
             underlineColorAndroid="transparent"
             autoCapitalize="none"
           />
-          <TouchableOpacity style={styles.button} onPress={onAddButtonPress}>
-            <Text style={styles.buttonText}>Add</Text>
+          <TouchableOpacity style={styles.button} onPress={onAddButtonPress} >
+            <TextInput style={styles.buttonText} onSubmitEditing={() => {onAddButtonPress(item)}}>Add</TextInput>
           </TouchableOpacity>
         </View>
         { entities && (
@@ -154,6 +134,16 @@ function SearchScreen({navigation}) {
           />
         </View>
         )}
+        <View style={styles.submitIngredients}>
+          <Button 
+            onPress={submitIngredients}
+            color="black"
+            title="Search Recipes.."        
+          >
+            <Text> Searching Recipes </Text>
+          </Button>
+        </View>
+
       </View>
   </>    
 );
@@ -181,3 +171,9 @@ export default function App() {
         </NavigationContainer>
     );
 }
+
+// Differentiate Each individual user so when adding to db its seperate for each user / device
+// when the list is empty ( ie. opening search page ) display button which wants user to user camera
+// Add recipes page
+// Fill recipes page
+// Add the cloud function
