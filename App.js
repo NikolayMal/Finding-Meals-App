@@ -9,7 +9,6 @@ import { AntDesign } from '@expo/vector-icons';
 import { Camera } from "expo-camera";
 
 import { firebase } from './components/fbconfig/config';
-// import storage from '@react-native-firebase/storage';
 
 function HomeScreen({navigation}) {
 
@@ -32,7 +31,10 @@ function CameraScreen({navigation}) {
   const [hasPermission, setHasPermission] = useState(null);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [capturedImage, setCapturedImage] = useState(null);
-  const [type, setType] = useState(Camera.Constants.Type.back);
+  const [image, setImage] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [transferred, setTransferred] = useState(0);
+  let camera = Camera;
 
   useEffect(() => {
     (async () => {
@@ -56,44 +58,31 @@ function CameraScreen({navigation}) {
     setCapturedImage(photo);
   };
 
-  const uploadImage = async () => {
-    const { uri } = capturedImage;
-    const filename = uri.substring(uri.lastIndexOf('/') + 1);
-    const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
-    setUploading(true);
-    setTransferred(0);
-    const task = storage()
-      .ref(filename)
-      .putFile(uploadUri);
-    // set progress state
-    task.on('state_changed', snapshot => {
-      setTransferred(
-        Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000
-      );
-    });
-    try {
-      await task;
-    } catch (e) {
-      console.error(e);
-    }
-    setUploading(false);
-    Alert.alert(
-      'Photo uploaded!',
-      'Your photo has been uploaded to Firebase Cloud Storage!'
-    );
-    setImage(null);
-  };
+  async function uploadImage() {
+    const storage = firebase.storage();
+    const uri = capturedImage.uri
+    const blob = await new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      resolve(xhr.response);
+    };
+    xhr.onerror = function (e) {
+      console.log(e);
+      reject(new TypeError("Network request failed"));
+    };
+      xhr.responseType = "blob";
+      xhr.open("GET", uri, true);
+      xhr.send(null);
+    })
 
-    // const uploadImage = async () => {
-    //   // const { uri } = image; 
-    //   const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    //   const data = {
-    //     image: 
-    //     createdAt: timestamp
-    //   }  
+    const storageRef = firebase.storage().ref();
     
-
-    // }
+    storageRef.child('photo.jpg').put(blob, {
+      contentType: 'image/jpeg'
+    }).then((snapshot)=>{
+      blob.close();
+    })
+  }
 
   return (
     <View style={styles.cameraContainer} >
@@ -109,7 +98,7 @@ function CameraScreen({navigation}) {
                 <Text style={styles.imageRetakeText} > Re-take </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => uploadImage}
+                onPress={uploadImage}
                 style={styles.imageReTakePicture} >
                 <Text style={styles.imageRetakeText} > Send Image </Text>
               </TouchableOpacity>
@@ -119,7 +108,6 @@ function CameraScreen({navigation}) {
       ) : (
         <Camera
           style={{ flex: 1 }}
-          type={type}
           ref={(r) => {
             camera = r;
           }}> 
@@ -239,7 +227,7 @@ function SearchScreen({navigation}) {
             autoCapitalize="none"
           />
           <TouchableOpacity style={styles.button} onPress={onAddButtonPress} >
-            <TextInput style={styles.buttonText} onSubmitEditing={() => {onAddButtonPress(item)}}>Add</TextInput>
+            <Text style={styles.buttonText} onSubmitEditing={() => {onAddButtonPress(item)}}>Add</Text>
           </TouchableOpacity>
         </View>
         { entities && (
