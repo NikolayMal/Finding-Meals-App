@@ -8,7 +8,10 @@ import { Camera } from "expo-camera";
 
 import { firebase } from '../../fbconfig/config';
 
-export default function SearchScreen(props, {navigation}) {
+import { useNavigation } from '@react-navigation/native';
+
+export default function SearchScreen(props) {
+    const navigation = useNavigation(); 
     const [entityText, setEntityText] = useState('')
     const [entities, setEntities] = useState([])
 
@@ -21,9 +24,6 @@ export default function SearchScreen(props, {navigation}) {
     const [hasPermission, setHasPermission] = useState(null);
     const [previewVisible, setPreviewVisible] = useState(false);
     const [capturedImage, setCapturedImage] = useState(null);
-    const [image, setImage] = useState(null);
-    const [uploading, setUploading] = useState(false);
-    const [transferred, setTransferred] = useState(0);
     let camera = Camera;
 
     useEffect(() => {
@@ -74,26 +74,26 @@ export default function SearchScreen(props, {navigation}) {
         const storage = firebase.storage();
         const uri = capturedImage.uri
         const blob = await new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.onload = function () {
-        resolve(xhr.response);
-        };
-        xhr.onerror = function (e) {
-        console.log(e);
-        reject(new TypeError("Network request failed"));
-        };
-        xhr.responseType = "blob";
-        xhr.open("GET", uri, true);
-        xhr.send(null);
+          const xhr = new XMLHttpRequest();
+          xhr.onload = function () {
+            resolve(xhr.response);
+          };
+          xhr.onerror = function (e) {
+            console.log(e);
+            reject(new TypeError("Network request failed"));
+          };
+          xhr.responseType = "blob";
+          xhr.open("GET", uri, true);
+          xhr.send(null);
         })
 
-        const storageRef = firebase.storage().ref();
+      const storageRef = firebase.storage().ref();
         
-        storageRef.child('photo.jpg').put(blob, {
-        contentType: 'image/jpeg'
-        }).then((snapshot)=>{
+      storageRef.child('photo.jpg').put(blob, {
+      contentType: 'image/jpeg'
+      }).then((snapshot)=>{
         blob.close();
-        })
+      })
     }
 
     const onAddButtonPress = () => {
@@ -145,7 +145,7 @@ export default function SearchScreen(props, {navigation}) {
         )
     }
     const submitIngredients = () => {
-        alert("Searching for Recipes")
+      navigation.navigate('recipe')
     }
 
     return (
@@ -193,21 +193,17 @@ export default function SearchScreen(props, {navigation}) {
                 <TouchableOpacity onPress={takePicture} style={styles.takePictureButton } />
               </View>
             </View>
+            <View style={styles.cameraCloseContainerButton}>
+              <TouchableOpacity
+                onPress={() => { setModalVisible(!modalVisible) }}
+              >
+                <Text style={styles.imageRetakeText}>Close Camera</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </Camera>
       )}
     </View>
-        {/* <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>Hello World!</Text>
-            <Pressable
-              style={[styles.modalbutton, styles.buttonClose]}
-              onPress={() => setModalVisible(!modalVisible)}
-            >
-              <Text style={styles.textStyle}>Hide Modal</Text>
-            </Pressable>
-          </View>
-        </View> */}
       </Modal>
       <Pressable
         style={[styles.buttonContainer, styles.buttonText]}
@@ -249,50 +245,6 @@ export default function SearchScreen(props, {navigation}) {
                 </Button>
             </View>
     </View>
-        {/* <View style={styles.container}>
-        <View style={styles.toCameraScreen}>
-            <TouchableOpacity
-            style={styles.buttonContainer}
-                //onPress={setCameraOff(true)}
-            >
-                <Text style={styles.buttonText}>camera</Text>
-            </TouchableOpacity>
-        </View>
-        <View style={styles.formContainer}>
-            <TextInput
-                style={styles.input}
-                placeholder='Add new entity'
-                placeholderTextColor="#aaaaaa"
-                onChangeText={(text) => setEntityText(text)}
-                value={entityText}
-                underlineColorAndroid="transparent"
-                autoCapitalize="none"
-            />
-            <TouchableOpacity style={styles.button} onPress={onAddButtonPress} >
-            <Text style={styles.buttonText} onSubmitEditing={() => {onAddButtonPress(item)}}>Add</Text>
-            </TouchableOpacity>
-            </View>
-            { entities && (
-            <View style={styles.listContainer}>
-                <FlatList
-                data={entities}
-                renderItem={renderEntity}
-                keyExtractor={(item) => item.id}
-                removeClippedSubviews={true}
-                />
-            </View>
-            )}
-            <View style={styles.submitIngredients}>
-                <Button 
-                onPress={submitIngredients}
-                color="black"
-                title="Search Recipes.."        
-                >
-                <Text> Searching Recipes </Text>
-                </Button>
-            </View>
-    
-            </View> */}
         </>    
-        )    
+  )    
 }

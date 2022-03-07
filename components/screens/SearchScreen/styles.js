@@ -203,5 +203,10 @@ export default StyleSheet.create({
         bottom: 0,
         borderRadius: 50,
         backgroundColor: "#fff",
-    }, 
+    },
+    cameraCloseContainerButton: {
+        position: "absolute",
+        top: 30,
+        padding: 10,
+    },
 })
