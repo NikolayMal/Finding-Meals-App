@@ -52,5 +52,10 @@ export default StyleSheet.create({
     entityText: {
         fontSize: 20,
         color: '#333333'
+    },buttonContainer: {
+        backgroundColor: '#222',
+        borderRadius: 5,
+        padding: 10,
+        margin: 20
     }
 })

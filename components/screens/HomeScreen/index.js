@@ -17,6 +17,12 @@ export default function HomeScreen({navigation}) {
             >
                 <Text style={styles.buttonText}>to search</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+            style={styles.buttonContainer}
+            onPress={() =>navigation.navigate('recipe')}
+            >
+                <Text style={styles.buttonText}>to recipe</Text>
+            </TouchableOpacity>
           </View>
         )
     }
