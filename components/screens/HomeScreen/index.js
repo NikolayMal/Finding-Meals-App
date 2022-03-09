@@ -3,6 +3,8 @@ import { FlatList, Keyboard, Text, TextInput, TouchableOpacity, View } from 'rea
 import { StatusBar } from 'expo-status-bar';
 import styles from './styles';
 
+
+
 import { firebase } from '../../fbconfig/config';
 
 export default function HomeScreen({navigation}) {

@@ -8,6 +8,9 @@ import {decode, encode} from 'base-64'
 if (!global.btoa) {  global.btoa = encode }
 if (!global.atob) { global.atob = decode }
 
+// Issue with Async warning tied to Firebase & Expo : 
+// https://github.com/firebase/firebase-js-sdk/issues/1847
+
 import { firebase } from './components/fbconfig/config';
 
 const Stack = createStackNavigator();

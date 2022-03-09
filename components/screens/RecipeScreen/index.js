@@ -13,30 +13,34 @@ export default function RecipeScreen ({navigation}) {
   const [recipes, setRecipes] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [showIngredients, setshowIngredients] = useState(false);
+  const [queryString, setQueryString] = useState('');
 
   const APP_ID = '4183953e';
   const APP_KEY = '7afed6902d0ef49e947a3a09ab0f4286';
-  const ingredientsArray = ['pizza', 'egg'];
-  const query = ['pizza%2C%20egg'];
-  const url = `https://api.edamam.com/search?q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}`;
+  const ingredientsArray = ['rice', 'chicken']; // String that ends up in queryString
+  const url = `https://api.edamam.com/search?q=${queryString}&app_id=${APP_ID}&app_key=${APP_KEY}`;
 
   const getRecipes = async() => {
     const result = await axios.get(url);
     setRecipes(result.data.hits);
-   //console.log(result.data.hits);
+    // console.log(result.data.hits);
     setLoading(false);
   }
 
   useEffect(() => {
     getRecipes();
+    ingredientsString();
   }, []);
 
-  // const ingredientsString = () => {
-  //   const querystring = ingredientsArray.map((ingredientsArray) => 
-  //     ingredientsArray + '1'
-  //   )
-  //   console.log(ingredientsArray)
-  // }
+  const ingredientsString = () => {
+    const queryarray = ingredientsArray.map((ingredientsArray) => 
+      ingredientsArray + '%2C%20'
+    )
+    const querystring = queryarray.toString().split(','); // Split object by ,
+    const querystringR = querystring.toString().replace(',', ''); // Remove ,
+    const querystringE = querystringR.toString().slice(0, -6); // Remove last 6 (%2C%20) from array
+    setQueryString(querystringE);
+  }
 
   const renderRecipe = ({item, index}) => {
     let imageHttpUrl = {uri : item.recipe.image}
@@ -45,17 +49,15 @@ export default function RecipeScreen ({navigation}) {
       <View style={styles.entityContainer} >
       <TextInput style={styles.entityText} blurOnSubmit={false} >
         {item.recipe.label}   
-        {/* {item.recipe.food} */}
       </TextInput>
       <Image
         style={{width: 50, height: 50}}
-        // source={require('../../../assets/favicon.png')}
         source={imageHttpUrl}
         alt = {item.recipe.label}
         />
       <Text 
-      style={{color: 'blue'}}  
-      onPress={() => Linking.openURL('http://google.com')}
+        style={{color: 'blue'}}  
+        onPress={() => Linking.openURL(item.recipe.shareAs)} // also can use item.recipe.url
       >
         go to recipe...
      </Text>
@@ -64,9 +66,6 @@ export default function RecipeScreen ({navigation}) {
      {showIngredients && 
      <Text style={{ color: 'red' }}>{item.recipe.ingredientLines}</Text>
      }
-
-          
-      
      </View>
     </>
     )
