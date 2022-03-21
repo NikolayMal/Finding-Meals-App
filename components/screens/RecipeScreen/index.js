@@ -5,42 +5,83 @@ import { Linking } from 'react-native';
 import { FontAwesome } from "@expo/vector-icons";
 import { AntDesign } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
-import styles from './styles'
 
-export default function RecipeScreen ({navigation}) {
+import styles from './styles'
+import { firebase } from '../../fbconfig/config';
+import { get } from 'react-native/Libraries/Utilities/PixelRatio';
+
+export default function RecipeScreen (props) {
   var axios = require("axios").default;
 
   const [recipes, setRecipes] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [showIngredients, setshowIngredients] = useState(false);
   const [queryString, setQueryString] = useState('');
+  const [entities, setEntities] = useState([])
+  const [ingr, setIngr] = useState([])
 
-  const APP_ID = '4183953e';
-  const APP_KEY = '7afed6902d0ef49e947a3a09ab0f4286';
-  const ingredientsArray = ['rice', 'chicken']; // String that ends up in queryString
-  const url = `https://api.edamam.com/search?q=${queryString}&app_id=${APP_ID}&app_key=${APP_KEY}`;
-
-  const getRecipes = async() => {
-    const result = await axios.get(url);
-    setRecipes(result.data.hits);
-    // console.log(result.data.hits);
-    setLoading(false);
-  }
+  const entityRef = firebase.firestore().collection('entities')
+  const userID = props.extraData.id
 
   useEffect(() => {
-    getRecipes();
-    ingredientsString();
-  }, []);
+    entityRef
+    .where("authorID", "==", userID)
+    .orderBy('createdAt', 'desc')
+    .onSnapshot(querySnapshot => {
+      const newingreds = []
+      querySnapshot.forEach(doc => {     
+        const ingreds = doc.data().text
+        newingreds.push(ingreds)
+        console.log("ingr: " + ingreds)
+      });
+      setIngr(newingreds)
+      // getRecipes();      
+    },error => {console.log(error)})
 
-  const ingredientsString = () => {
+    // setTimeout(() => {
+    //   getRecipes();
+    // }, 5000)
+  }, []); 
+
+  function sleep(ms) {
+    console.log("Sleeping for : " + ms )
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+      
+    });
+    
+  }
+  console.log("tttttttttttttt")
+  console.log(ingr)
+
+  const getRecipes = async() => {
+    
+    
+    console.log("In getRecipes()")
+    await sleep(2000)
+    console.log("In getRecipes()")
+    // console.log("ingredients: " + ingr)
+    const ingredientsArray = ingr;
+    // console.log("arra: " + ingredientsArray)
+
     const queryarray = ingredientsArray.map((ingredientsArray) => 
       ingredientsArray + '%2C%20'
     )
     const querystring = queryarray.toString().split(','); // Split object by ,
     const querystringR = querystring.toString().replace(',', ''); // Remove ,
     const querystringE = querystringR.toString().slice(0, -6); // Remove last 6 (%2C%20) from array
-    setQueryString(querystringE);
-  }
+    
+    const APP_ID = '4183953e';
+    const APP_KEY = '7afed6902d0ef49e947a3a09ab0f4286';
+    console.log(ingr)
+    const url = `https://api.edamam.com/search?q=${querystringE}&app_id=${APP_ID}&app_key=${APP_KEY}`;
+
+    console.log(url)
+    const result = await axios.get(url);
+    setRecipes(result.data.hits);
+    // console.log(result.data.hits);
+    setLoading(false);
+  }  
 
   const renderRecipe = ({item, index}) => {
     let imageHttpUrl = {uri : item.recipe.image}
@@ -73,8 +114,16 @@ export default function RecipeScreen ({navigation}) {
 
   return (
     <>
+    
     <View style={{ flex: 1, padding: 24 }}>
-    {isLoading ? <ActivityIndicator/> : (
+    {isLoading ? <View>
+      <Button
+        onPress={() => getRecipes()}
+        color="black"
+        title="Load Recipes"        
+      >
+      </Button>
+      </View> : (
       <FlatList
         data={recipes}
         renderItem={renderRecipe}
@@ -83,6 +132,7 @@ export default function RecipeScreen ({navigation}) {
       />
     )}
   </View>
+  
   </>
   );
 };

@@ -239,9 +239,8 @@ export default function SearchScreen(props) {
                 <Button 
                 onPress={submitIngredients}
                 color="black"
-                title="Search Recipes.."        
+                title="Save Ingredients.."        
                 >
-                <Text> Searching Recipes </Text>
                 </Button>
             </View>
     </View>
