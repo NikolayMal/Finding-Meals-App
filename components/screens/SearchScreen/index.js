@@ -10,6 +10,12 @@ import { firebase } from '../../fbconfig/config';
 
 import { useNavigation } from '@react-navigation/native';
 
+import * as tf from '@tensorflow/tfjs';
+// import '@tensorflow/tfjs-react-native';
+import { fetch, decodeJpeg, bundleResourceIO } from '@tensorflow/tfjs-react-native';
+import { model } from '@tensorflow/tfjs';
+
+
 export default function SearchScreen(props) {
     const navigation = useNavigation(); 
     const [entityText, setEntityText] = useState('')
@@ -24,9 +30,10 @@ export default function SearchScreen(props) {
     const [hasPermission, setHasPermission] = useState(null);
     const [previewVisible, setPreviewVisible] = useState(false);
     const [capturedImage, setCapturedImage] = useState(null);
-    let camera = Camera;
-
+    let camera = Camera;    
+     
     useEffect(() => {
+      tf.ready();
         entityRef
             .where("authorID", "==", userID)
             .orderBy('createdAt', 'desc')
@@ -53,6 +60,27 @@ export default function SearchScreen(props) {
         setHasPermission(status === "granted");
         })();
     }, []);
+
+    const loadmodel = async () => {   
+      const tfReadyy = await tf.ready(); 
+      const modeljson = await require("../../../assets/jsmodels/model.json")
+      const modelweights = await require('../../../assets/jsmodels/group1-shard.bin')
+      class L2 {
+
+        static className = 'L2';
+    
+        constructor(config) {
+           return tf.regularizers.l1l2(config)
+        }
+      }
+      tf.serialization.registerClass(L2);
+      console.log('json and weights loaded')
+      console.log('loading model -----')
+      const ingredientmodel = await tf.loadLayersModel(bundleResourceIO(modeljson, modelweights))
+      console.log('model loaded')
+
+      // ingredientmodel.summary()
+    }
 
     if (hasPermission === null) {
         return <View />;
@@ -89,7 +117,7 @@ export default function SearchScreen(props) {
 
       const storageRef = firebase.storage().ref();
         
-      storageRef.child('photo.jpg').put(blob, {
+      storageRef.child('photo' + userID + '.jpg').put(blob, {
       contentType: 'image/jpeg'
       }).then((snapshot)=>{
         blob.close();
@@ -207,7 +235,7 @@ export default function SearchScreen(props) {
       </Modal>
       <Pressable
         style={[styles.buttonContainer, styles.buttonText]}
-        onPress={() => setModalVisible(true)}
+        onPress={() => { setModalVisible(true); loadmodel()}}
       >
         <Text style={styles.textStyle}>Show Modal</Text>
       </Pressable>

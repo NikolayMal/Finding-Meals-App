@@ -125,6 +125,7 @@ export default function RecipeScreen (props) {
       </Button>
       </View> : (
       <FlatList
+        // horizontal
         data={recipes}
         renderItem={renderRecipe}
         keyExtractor={(item) => item.id}
