@@ -51,7 +51,9 @@ export default StyleSheet.create({
     },
     entityText: {
         fontSize: 20,
-        color: '#333333'
+        color: '#333333',
+        flexWrap: 'wrap',
+        flexShrink: 1,
     },
     image: {
         width: 50,

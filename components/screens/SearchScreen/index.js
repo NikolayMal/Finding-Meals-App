@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, Keyboard, Button, Modal, Pressable, Alert, ImageBackground } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, Keyboard, Button, Modal, Pressable, Alert, ImageBackground, Image } from 'react-native';
 import styles from './styles';
 import { FontAwesome } from "@expo/vector-icons";
 import { AntDesign } from '@expo/vector-icons';
@@ -10,18 +10,17 @@ import { firebase } from '../../fbconfig/config';
 
 import { useNavigation } from '@react-navigation/native';
 
-import * as tf from '@tensorflow/tfjs';
-// import '@tensorflow/tfjs-react-native';
-import { fetch, decodeJpeg, bundleResourceIO } from '@tensorflow/tfjs-react-native';
-import { model } from '@tensorflow/tfjs';
-
+import * as FileSystem from 'expo-file-system';
+import { Dilation2DBackpropFilter } from '@tensorflow/tfjs';
 
 export default function SearchScreen(props) {
     const navigation = useNavigation(); 
     const [entityText, setEntityText] = useState('')
     const [entities, setEntities] = useState([])
 
+
     const entityRef = firebase.firestore().collection('entities')
+    const prevRef   = firebase.firestore().collection('previous')
     const userID = props.extraData.id
 
     const [modalVisible, setModalVisible] = useState(false);
@@ -33,54 +32,32 @@ export default function SearchScreen(props) {
     let camera = Camera;    
      
     useEffect(() => {
-      tf.ready();
-        entityRef
-            .where("authorID", "==", userID)
-            .orderBy('createdAt', 'desc')
-            .onSnapshot(
-                querySnapshot => {
-                    const newEntities = []
-                    querySnapshot.forEach(doc => {
-                        const entity = doc.data()
-                        entity.id = doc.id
-                        newEntities.push(entity)
-                    });
-                    setEntities(newEntities)
-                },
-                error => {
-                    console.log(error)
-                }
-            )
-        
+      entityRef
+        .where("authorID", "==", userID)
+        .orderBy('createdAt', 'desc')
+        .onSnapshot(
+          querySnapshot => {
+            const newEntities = []
+            querySnapshot.forEach(doc => {
+              const entity = doc.data()
+              entity.id = doc.id
+              newEntities.push(entity)
+            });
+            setEntities(newEntities)
+            },
+            error => {
+              console.log(error)
+            }
+      )
     }, [])
 
+    // Camera Permission
     useEffect(() => {
         (async () => {
         const { status } = await Camera.requestCameraPermissionsAsync();
         setHasPermission(status === "granted");
         })();
     }, []);
-
-    const loadmodel = async () => {   
-      const tfReadyy = await tf.ready(); 
-      const modeljson = await require("../../../assets/jsmodels/model.json")
-      const modelweights = await require('../../../assets/jsmodels/group1-shard.bin')
-      class L2 {
-
-        static className = 'L2';
-    
-        constructor(config) {
-           return tf.regularizers.l1l2(config)
-        }
-      }
-      tf.serialization.registerClass(L2);
-      console.log('json and weights loaded')
-      console.log('loading model -----')
-      const ingredientmodel = await tf.loadLayersModel(bundleResourceIO(modeljson, modelweights))
-      console.log('model loaded')
-
-      // ingredientmodel.summary()
-    }
 
     if (hasPermission === null) {
         return <View />;
@@ -92,7 +69,9 @@ export default function SearchScreen(props) {
 
     const takePicture = async () => {
         if (!camera) return;
-        let photo = await camera.takePictureAsync();
+        const options = { base64: true, doNotSave: true }
+        let photo = await camera.takePictureAsync(options);
+        // console.log(photo.base64)
         setPreviewVisible(true);
         setCapturedImage(photo);
     };
@@ -117,7 +96,7 @@ export default function SearchScreen(props) {
 
       const storageRef = firebase.storage().ref();
         
-      storageRef.child('photo' + userID + '.jpg').put(blob, {
+      storageRef.child(userID + '.jpg').put(blob, {
       contentType: 'image/jpeg'
       }).then((snapshot)=>{
         blob.close();
@@ -156,6 +135,30 @@ export default function SearchScreen(props) {
           })
     }
 
+    const submitIngredients = async() => {
+      // Delete all previous
+      await prevRef.get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          if (doc.data().authorID === userID) {
+            prevRef.doc(doc.id).delete()
+          }
+        })
+      })
+      // Send ingredients found to previous so it can be displayed on the screen
+      // Delete ingredients in entities
+      await entityRef.get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            console.log(doc.data().authorID)
+            if (doc.data().authorID === userID) {
+                prevRef.add(doc.data())
+                // entityRef.doc(doc.id).delete()
+            }
+        })
+      })
+      navigation.navigate('recipe')
+    }
+
+
     const renderEntity = ({item, index}) => {
         return (
         <View style={styles.entityContainer} >
@@ -172,9 +175,7 @@ export default function SearchScreen(props) {
         </View>
         )
     }
-    const submitIngredients = () => {
-      navigation.navigate('recipe')
-    }
+    
 
     return (
     <>
@@ -235,7 +236,7 @@ export default function SearchScreen(props) {
       </Modal>
       <Pressable
         style={[styles.buttonContainer, styles.buttonText]}
-        onPress={() => { setModalVisible(true); loadmodel()}}
+        onPress={() =>  setModalVisible(true)}
       >
         <Text style={styles.textStyle}>Show Modal</Text>
       </Pressable>
@@ -272,6 +273,6 @@ export default function SearchScreen(props) {
                 </Button>
             </View>
     </View>
-        </>    
+    </>    
   )    
 }

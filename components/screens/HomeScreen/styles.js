@@ -51,11 +51,42 @@ export default StyleSheet.create({
     },
     entityText: {
         fontSize: 20,
-        color: '#333333'
+        color: '#333333',
+        flexWrap: 'wrap',
+        flexShrink: 1,
     },buttonContainer: {
         backgroundColor: '#222',
         borderRadius: 5,
         padding: 10,
         margin: 20
-    }
+    },
+    image: {
+        width: 50,
+        height: 50,
+    },
+    flatliststyle: { 
+        padding: 24,
+        flexGrow: 0,
+        height: "50%",
+    },
+    previousTextContainer: {
+        flexWrap: 'wrap',
+        flexShrink: 1,
+        padding: 50,
+        borderBottomColor: '#cccccc',
+        borderBottomWidth: 1,
+        borderLeftColor: '#cccccc',
+        borderLeftWidth: 1,
+        borderTopColor: '#cccccc',
+        borderTopWidth: 1,
+        borderRightColor: '#cccccc',
+        borderRightWidth: 1,
+    },
+    previousText: {
+        fontSize: 20,
+        color: '#333333',
+        // textShadowColor:'#585858',
+        // textShadowOffset:{width: 1, height: 1},
+        // textShadowRadius:1,
+    },
 })

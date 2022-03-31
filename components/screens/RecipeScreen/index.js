@@ -47,18 +47,11 @@ export default function RecipeScreen (props) {
     console.log("Sleeping for : " + ms )
     return new Promise((resolve) => {
       setTimeout(resolve, ms);
-      
     });
-    
   }
   console.log("tttttttttttttt")
-  console.log(ingr)
 
   const getRecipes = async() => {
-    
-    
-    console.log("In getRecipes()")
-    await sleep(2000)
     console.log("In getRecipes()")
     // console.log("ingredients: " + ingr)
     const ingredientsArray = ingr;
@@ -73,13 +66,11 @@ export default function RecipeScreen (props) {
     
     const APP_ID = '4183953e';
     const APP_KEY = '7afed6902d0ef49e947a3a09ab0f4286';
-    console.log(ingr)
     const url = `https://api.edamam.com/search?q=${querystringE}&app_id=${APP_ID}&app_key=${APP_KEY}`;
 
     console.log(url)
     const result = await axios.get(url);
     setRecipes(result.data.hits);
-    // console.log(result.data.hits);
     setLoading(false);
   }  
 
