@@ -59,11 +59,19 @@ export default function HomeScreen(props) {
   }
 
   const previousSearch = async() => {
+    // Clear entities just incase there are any
+    await entityRef.get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        if (doc.data().authorID === userID) {
+          entityRef.doc(doc.id).delete()
+        }
+      })
+    })
     // Add all ingredients previous
     await prevRef.get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
           if (doc.data().authorID === userID) {
-              prevRef.add(doc.data())
+              entityRef.add(doc.data())
               // entityRef.doc(doc.id).delete()
           }
       })
