@@ -58,5 +58,10 @@ export default StyleSheet.create({
     image: {
         width: 50,
         height: 50,
-      },
+    },
+    radioButtonContainer: {
+        flex: 1,
+        alignItems: 'stretch',
+        justifyContent: 'center'
+    },
 })

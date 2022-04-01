@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, Keyboard, Button, Modal, Pressable, Alert, ImageBackground, ActivityIndicator, Image } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, Keyboard, Button, Modal, Pressable, Alert, ImageBackground, ActivityIndicator, Image, ScrollView } from 'react-native';
 import axios from 'axios';
 import { Linking } from 'react-native';
 import { FontAwesome } from "@expo/vector-icons";
@@ -9,6 +9,10 @@ import { StatusBar } from 'expo-status-bar';
 import styles from './styles'
 import { firebase } from '../../fbconfig/config';
 import { get } from 'react-native/Libraries/Utilities/PixelRatio';
+
+import TimeRadioButton from './timeRadioButton';
+import HealthRadioButton from './healthRadioButton'
+
 
 export default function RecipeScreen (props) {
   var axios = require("axios").default;
@@ -22,6 +26,59 @@ export default function RecipeScreen (props) {
 
   const entityRef = firebase.firestore().collection('entities')
   const userID = props.extraData.id
+
+  const [timeselectedOption, settimeSelectedOption] = useState(null);
+  const timeOptions = [
+    {
+        key: 'under60',
+        text: 'Under 60 minutes',
+    },
+    {
+        key: 'over60',
+        text: 'Over 60 minutes',
+    },
+  ];
+  const [healthselectedOption, sethealthSelectedOption] = useState(null);
+  const healthOptions = [
+    {
+        key: 'vegetarian',
+        text: 'Vegetarian',
+    },
+    {
+        key: 'vegan',
+        text: 'Vegan',
+    },
+    {
+        key: 'paleo',
+        text: 'Paleo',
+    },
+    {
+        key: 'dairy-free',
+        text: 'Dairy Free',
+    },
+    {
+        key: 'gluten-free',
+        text: 'Gluten Free',
+    },
+    {
+        key: 'keto-friendly',
+        text: 'Ketogenic',
+    },
+    {
+        key: 'pescatarian',
+        text: 'Pescatarian',
+    },
+    {
+        key: 'egg-free',
+        text: 'Egg Free',
+    },
+    {
+        key: 'sugar-conscious',
+        text: 'Sugar Conscious',
+    }
+  ];
+      
+
 
   useEffect(() => {
     entityRef
@@ -49,7 +106,6 @@ export default function RecipeScreen (props) {
       setTimeout(resolve, ms);
     });
   }
-  console.log("tttttttttttttt")
 
   const getRecipes = async() => {
     console.log("In getRecipes()")
@@ -103,18 +159,56 @@ export default function RecipeScreen (props) {
     )
   }
 
+  const ontimeSelect = (timeitem) => {
+    if (timeselectedOption && timeselectedOption.key === timeitem.key) {
+      settimeSelectedOption(null);
+    } else {
+      settimeSelectedOption(timeitem);
+    }
+  };
+
+  const onhealthSelect = (item) => {
+    if (healthselectedOption && healthselectedOption.key === item.key) {
+      sethealthSelectedOption(null);
+    } else {
+      sethealthSelectedOption(item);
+    }
+  };
+
+  const onSubmit = () => {
+    console.log(timeselectedOption);
+    console.log(healthselectedOption);
+  }
+
   return (
     <>
-    
     <View style={{ flex: 1, padding: 24 }}>
-    {isLoading ? <View>
-      <Button
-        onPress={() => getRecipes()}
-        color="black"
-        title="Load Recipes"        
-      >
-      </Button>
-      </View> : (
+    {isLoading ? 
+    <>
+      <View style={styles.radioButtonContainer}>
+        <ScrollView>
+        <Text>Time</Text>
+        <TimeRadioButton
+          selectedOption={timeselectedOption}
+          onSelect={ontimeSelect}
+          options={timeOptions}
+        />
+        <Text>Health</Text>
+        <HealthRadioButton
+          selectedOption={healthselectedOption}
+          onSelect={onhealthSelect}
+          options={healthOptions}
+        />
+        </ScrollView>
+        <Button title="SUBMIT" onPress={onSubmit} />
+        <Button
+          onPress={() => getRecipes()}
+          color="black"
+          title="Load Recipes"        
+        >
+        </Button>
+        
+      </View></> : (
       <FlatList
         // horizontal
         data={recipes}
