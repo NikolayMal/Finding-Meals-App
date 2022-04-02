@@ -23,15 +23,15 @@ export default function HomeScreen(props) {
   let count = 0
 
   useEffect(() => {
-  //  getRecipe();
+   getRecipe();
   }, []); 
 
-  // const getRecipe = async () => {
-  //   const url = `https://api.edamam.com/search?q=beef%2C%20potato%2C%20leeks&app_id=4183953e&app_key=7afed6902d0ef49e947a3a09ab0f4286&ingr=5`;
-  //   const result = await axios.get(url);
-  //   setRecipes(result.data.hits);
+  const getRecipe = async () => {
+    const url = `https://api.edamam.com/search?q=beef%2C%20potato%2C%20leeks&app_id=4183953e&app_key=7afed6902d0ef49e947a3a09ab0f4286&ingr=5`;
+    const result = await axios.get(url);
+    setRecipes(result.data.hits);
     
-  // }
+  }
 
   const renderRecipe = ({item, index}) => {
     let imageHttpUrl = {uri : item.recipe.image}
@@ -110,7 +110,7 @@ export default function HomeScreen(props) {
             scrollEnabled={isScrollEnabled}
             data={recipes}
             renderItem={renderRecipe}
-            keyExtractor={(item) => item.id}
+            keyExtractor={item => item.id}
             removeClippedSubviews={true}
           />
         </View>

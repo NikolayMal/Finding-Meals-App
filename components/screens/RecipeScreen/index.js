@@ -12,6 +12,7 @@ import { get } from 'react-native/Libraries/Utilities/PixelRatio';
 
 import TimeRadioButton from './timeRadioButton';
 import HealthRadioButton from './healthRadioButton'
+import MealRadioButton from './mealRadioButton'
 
 
 export default function RecipeScreen (props) {
@@ -27,15 +28,19 @@ export default function RecipeScreen (props) {
   const entityRef = firebase.firestore().collection('entities')
   const userID = props.extraData.id
 
+  const [isTimeConstraint, setisTimeConstraint] = useState(false);
+  const [isHealthConstraint, setisHealthConstraint] = useState(false);
+  const [isMealConstraint, setisMealConstraint] = useState(false);
+
   const [timeselectedOption, settimeSelectedOption] = useState(null);
   const timeOptions = [
     {
-        key: 'under60',
-        text: 'Under 60 minutes',
+        key: 'under30',
+        text: 'Under 30 minutes',
     },
     {
-        key: 'over60',
-        text: 'Over 60 minutes',
+        key: 'under60',
+        text: 'Under 60 minutes',
     },
   ];
   const [healthselectedOption, sethealthSelectedOption] = useState(null);
@@ -77,8 +82,21 @@ export default function RecipeScreen (props) {
         text: 'Sugar Conscious',
     }
   ];
-      
-
+  const [mealselectedOption, setmealSelectedOption] = useState(null);
+  const mealOptions = [
+    {
+        key: 'Breakfast',
+        text: 'Breakfast',
+    },
+    {
+        key: 'Lunch',
+        text: 'Lunch',
+    },
+    {
+        key: 'Dinner',
+        text: 'Dinner',
+    }
+  ];
 
   useEffect(() => {
     entityRef
@@ -119,10 +137,31 @@ export default function RecipeScreen (props) {
     const querystring = queryarray.toString().split(','); // Split object by ,
     const querystringR = querystring.toString().replace(',', ''); // Remove ,
     const querystringE = querystringR.toString().slice(0, -6); // Remove last 6 (%2C%20) from array
-    
+    const querystringF = querystringE.toString().replace(',',''); // Remove ,
+    const querystringG = querystringF.toString().replace(' ', ''); // Remove spaces
+
+    let filter = ''
+
+    console.log('E' + querystringG)
+
+    if (timeselectedOption != null) {
+      if (timeselectedOption.key === 'under30' ) {
+        filter = filter + '&time=30'
+      }
+      if (timeselectedOption.key === 'under60' ) {
+        filter = filter + '&time=60'
+      }
+    }
+    if (healthselectedOption != null) {
+      filter = filter + '&' + healthselectedOption.key
+    }
+    if (mealselectedOption != null) {
+      filter = filter + '&' + mealselectedOption.key
+    }
+
     const APP_ID = '4183953e';
     const APP_KEY = '7afed6902d0ef49e947a3a09ab0f4286';
-    const url = `https://api.edamam.com/search?q=${querystringE}&app_id=${APP_ID}&app_key=${APP_KEY}`;
+    const url = `https://api.edamam.com/search?q=${querystringG}&app_id=${APP_ID}&app_key=${APP_KEY}${filter}`;
 
     console.log(url)
     const result = await axios.get(url);
@@ -167,17 +206,26 @@ export default function RecipeScreen (props) {
     }
   };
 
-  const onhealthSelect = (item) => {
-    if (healthselectedOption && healthselectedOption.key === item.key) {
+  const onhealthSelect = (healthitem) => {
+    if (healthselectedOption && healthselectedOption.key === healthitem.key) {
       sethealthSelectedOption(null);
     } else {
-      sethealthSelectedOption(item);
+      sethealthSelectedOption(healthitem);
+    }
+  };
+
+  const onmealSelect = (mealitem) => {
+    if ( mealselectedOption && mealselectedOption.key === mealitem.key) {
+      setmealSelectedOption(null);
+    } else {
+      setmealSelectedOption(mealitem);
     }
   };
 
   const onSubmit = () => {
-    console.log(timeselectedOption);
-    console.log(healthselectedOption);
+    console.log(timeselectedOption.key);
+    console.log(healthselectedOption.key);
+    console.log(mealselectedOption.key);
   }
 
   return (
@@ -187,19 +235,41 @@ export default function RecipeScreen (props) {
     <>
       <View style={styles.radioButtonContainer}>
         <ScrollView>
-        <Text>Time</Text>
-        <TimeRadioButton
-          selectedOption={timeselectedOption}
-          onSelect={ontimeSelect}
-          options={timeOptions}
-        />
-        <Text>Health</Text>
-        <HealthRadioButton
-          selectedOption={healthselectedOption}
-          onSelect={onhealthSelect}
-          options={healthOptions}
-        />
-        </ScrollView>
+          <TouchableOpacity
+            onPress={() => setisTimeConstraint(!isTimeConstraint)}
+          ><Text>Time Restraints</Text></TouchableOpacity>
+          {isTimeConstraint ? <>
+            <TimeRadioButton
+            selectedOption={timeselectedOption}
+            onSelect={ontimeSelect}
+            options={timeOptions}
+          />
+          </>
+          
+        : (<></>)}
+        <TouchableOpacity
+          onPress={() => setisHealthConstraint(!isHealthConstraint)}
+        ><Text>Health Options</Text></TouchableOpacity>
+        {isHealthConstraint ? <>
+          <HealthRadioButton
+            selectedOption={healthselectedOption}
+            onSelect={onhealthSelect}
+            options={healthOptions}
+          />
+        </> : (<></>)}
+        <TouchableOpacity
+          onPress={() => setisMealConstraint(!isMealConstraint)}
+        ><Text>Meal Type</Text>
+        </TouchableOpacity>
+        {isMealConstraint ? <>
+          <MealRadioButton
+            selectedOption={mealselectedOption}
+            onSelect={onmealSelect}
+            options={mealOptions}
+          />
+          
+        </> : (<></>)}
+      </ScrollView>
         <Button title="SUBMIT" onPress={onSubmit} />
         <Button
           onPress={() => getRecipes()}
@@ -213,7 +283,7 @@ export default function RecipeScreen (props) {
         // horizontal
         data={recipes}
         renderItem={renderRecipe}
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.id}
         removeClippedSubviews={true}
       />
     )}
