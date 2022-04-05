@@ -14,10 +14,8 @@ import styles from './components/screens/SearchScreen/styles';
 // https://github.com/firebase/firebase-js-sdk/issues/1847
 
 import { firebase } from './components/fbconfig/config';
-import { Button } from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import {Restart} from 'fiction-expo-restart';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Entypo } from "@expo/vector-icons";
 
 const Stack = createStackNavigator();
@@ -26,12 +24,6 @@ export default function App() {
 
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState(null)
-
-  // if (loading) {	
-  //   return (	
-  //     <></>	
-  //   )	
-  // }
 
   async function  logOut(){
     const asyncStorageKeys = await AsyncStorage.getAllKeys();

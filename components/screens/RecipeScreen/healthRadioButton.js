@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Text, View, TouchableOpacity, StyleSheet } from 'react-native';
 
 export default function HealthRadioButton({ options, selectedOption, onSelect }) {

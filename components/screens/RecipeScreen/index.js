@@ -1,28 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, Keyboard, Button, Modal, Pressable, Alert, ImageBackground, ActivityIndicator, Image, ScrollView } from 'react-native';
-import axios from 'axios';
+import { Text, View, FlatList, Image, ScrollView } from 'react-native';
 import { Linking } from 'react-native';
-import { FontAwesome, Ionicons, AntDesign, Entypo } from "@expo/vector-icons";
-import { StatusBar } from 'expo-status-bar';
+import { Ionicons, Entypo } from "@expo/vector-icons";
 
 import styles from './styles'
 import { firebase } from '../../fbconfig/config';
-import { get } from 'react-native/Libraries/Utilities/PixelRatio';
 
 import TimeRadioButton from './timeRadioButton';
 import HealthRadioButton from './healthRadioButton'
 import MealRadioButton from './mealRadioButton'
-import { EarlyStopping } from '@tensorflow/tfjs';
-
 
 export default function RecipeScreen (props) {
   var axios = require("axios").default;
 
   const [recipes, setRecipes] = useState([]);
   const [isLoading, setLoading] = useState(true);
-  const [showIngredients, setshowIngredients] = useState(false);
-  const [queryString, setQueryString] = useState('');
-  const [entities, setEntities] = useState([])
   const [ingr, setIngr] = useState([])
 
   const entityRef = firebase.firestore().collection('entities')

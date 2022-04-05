@@ -1,16 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, Keyboard, Button, Modal, Pressable, Alert, ImageBackground, Image } from 'react-native';
+import { Text, View, TouchableOpacity, TextInput, FlatList, Keyboard, Modal, Alert, ImageBackground } from 'react-native';
 import styles from './styles';
-import { AntDesign, Ionicons, FontAwesome, Entypo } from '@expo/vector-icons';
-import { StatusBar } from 'expo-status-bar';
+import { Ionicons, FontAwesome, Entypo } from '@expo/vector-icons';
 import { Camera } from "expo-camera";
-
 import { firebase } from '../../fbconfig/config';
-
 import { useNavigation } from '@react-navigation/native';
-
-import * as FileSystem from 'expo-file-system';
-import { Dilation2DBackpropFilter } from '@tensorflow/tfjs';
 
 export default function SearchScreen(props) {
     const navigation = useNavigation(); 
