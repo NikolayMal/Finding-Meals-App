@@ -8,10 +8,17 @@ import {decode, encode} from 'base-64'
 if (!global.btoa) {  global.btoa = encode }
 if (!global.atob) { global.atob = decode }
 
+
+import styles from './components/screens/SearchScreen/styles';
 // Issue with Async warning tied to Firebase & Expo : 
 // https://github.com/firebase/firebase-js-sdk/issues/1847
 
 import { firebase } from './components/fbconfig/config';
+import { Button } from 'react-native';
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import {Restart} from 'fiction-expo-restart';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Entypo } from "@expo/vector-icons";
 
 const Stack = createStackNavigator();
 
@@ -25,6 +32,22 @@ export default function App() {
   //     <></>	
   //   )	
   // }
+
+  async function  logOut(){
+    const asyncStorageKeys = await AsyncStorage.getAllKeys();
+    if (asyncStorageKeys.length > 0) {
+        if (Platform.OS === 'android') {
+            await AsyncStorage.clear();
+        }
+        if (Platform.OS === 'ios') {
+            await AsyncStorage.multiRemove(asyncStorageKeys);
+        }
+        
+    }
+    Restart();
+    console.log(' cleaning of async storage Done.');
+
+    }
 
   useEffect(() => {
     const usersRef = firebase.firestore().collection('users');
@@ -49,23 +72,29 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: { backgroundColor: '#4CD4CB' },
+          headerRight: () => (
+              <Entypo name="log-out" color="red" onPress={() => logOut()} style={styles.todoIcon} />
+          )
+      }}>
         { user ? (
           <>
-          <Stack.Screen name="home">
+          <Stack.Screen name="Home">
             {props => <HomeScreen {...props} extraData={user} />}
           </Stack.Screen>
-          <Stack.Screen name="search">
+          <Stack.Screen name="Search">
             {props => <SearchScreen {...props} extraData={user} />}
           </Stack.Screen>
-          <Stack.Screen name="recipe">
+          <Stack.Screen name="Recipe">
             {props => <RecipeScreen {...props} extraData={user} />}
           </Stack.Screen>
           </>
         ) : (
           <>
-            <Stack.Screen name="login" component={LoginScreen} />
-            <Stack.Screen name="registration" component={RegistrationScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Registration" component={RegistrationScreen} />
           </>
         )}
       </Stack.Navigator>

@@ -10,7 +10,7 @@ export default function LoginScreen({navigation}) {
     const [password, setPassword] = useState('')
 
     const onFooterLinkPress = () => {
-        navigation.navigate('registration')
+        navigation.navigate('Registration')
     }
  
     const onLoginPress = () => {
@@ -29,7 +29,7 @@ export default function LoginScreen({navigation}) {
                             return;
                         }
                         const user = firestoreDocument.data()
-                        navigation.navigate('home', {user})
+                        navigation.navigate('Home', {user})
                     })
                     .catch(error => {
                         alert(error)
@@ -47,7 +47,7 @@ export default function LoginScreen({navigation}) {
                 keyboardShouldPersistTaps="always">
                 <Image
                     style={styles.logo}
-                    source={require('../../../assets/icon.png')}
+                    source={require('../../../assets/Finding_Meals-logos_black.png')}
                 />
                 <TextInput
                     style={styles.input}

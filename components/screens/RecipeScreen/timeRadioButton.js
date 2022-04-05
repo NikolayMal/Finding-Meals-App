@@ -30,22 +30,22 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 30,
+    paddingRight: 15,
+    paddingLeft: 15,
   },
-
   circle: {
     height: 20,
     width: 20,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#ACACAC',
+    borderColor: '#020202',
     alignItems: 'center',
     justifyContent: 'center',
   },
-
   checkedCircle: {
     width: 14,
     height: 14,
     borderRadius: 7,
-    backgroundColor: '#794F9B',
+    backgroundColor: '#4CD4CB',
   },
 });

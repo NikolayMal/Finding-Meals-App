@@ -44,16 +44,27 @@ export default StyleSheet.create({
         padding: 20,
     },
     entityContainer: {
-        marginTop: 16,
+        marginTop: 10,
         borderBottomColor: '#cccccc',
         borderBottomWidth: 1,
-        paddingBottom: 16
+        paddingBottom: 16,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     entityText: {
         fontSize: 20,
-        color: '#333333',
+        color: '#020202',
         flexWrap: 'wrap',
         flexShrink: 1,
+        padding: 5,
+    },
+    entityImage: {
+        width: "70%",
+        height: 150,
+        marginTop: 10,
+        marginBottom: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     image: {
         width: 50,
@@ -62,6 +73,21 @@ export default StyleSheet.create({
     radioButtonContainer: {
         flex: 1,
         alignItems: 'stretch',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        color: "purple",
+    },
+    loadIngredients: {
+        padding: 5,
+        paddingBottom: -3,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    titleText: {
+        fontSize: 20,
+        textAlign: "center",
+        fontWeight: "bold",
+    },
+    openOptions: {
+        padding: 5,
     },
 })

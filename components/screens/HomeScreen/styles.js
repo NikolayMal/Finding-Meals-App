@@ -44,17 +44,29 @@ export default StyleSheet.create({
         padding: 20,
     },
     entityContainer: {
-        marginTop: 16,
+        marginTop: 10,
         borderBottomColor: '#cccccc',
         borderBottomWidth: 1,
-        paddingBottom: 16
+        paddingBottom: 16,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     entityText: {
         fontSize: 20,
-        color: '#333333',
+        color: '#020202',
         flexWrap: 'wrap',
         flexShrink: 1,
-    },buttonContainer: {
+        padding: 5,
+    },
+    entityImage: {
+        width: "70%",
+        height: 150,
+        marginTop: 10,
+        marginBottom: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    buttonContainer: {
         backgroundColor: '#222',
         borderRadius: 5,
         padding: 10,
@@ -65,22 +77,8 @@ export default StyleSheet.create({
         height: 50,
     },
     flatliststyle: { 
-        padding: 24,
-        flexGrow: 0,
-        height: "50%",
-    },
-    previousTextContainer: {
-        flexWrap: 'wrap',
-        flexShrink: 1,
-        padding: 50,
-        borderBottomColor: '#cccccc',
-        borderBottomWidth: 1,
-        borderLeftColor: '#cccccc',
-        borderLeftWidth: 1,
-        borderTopColor: '#cccccc',
-        borderTopWidth: 1,
-        borderRightColor: '#cccccc',
-        borderRightWidth: 1,
+        width: "90%",
+        height: "85%",
     },
     previousText: {
         fontSize: 20,
@@ -88,5 +86,33 @@ export default StyleSheet.create({
         // textShadowColor:'#585858',
         // textShadowOffset:{width: 1, height: 1},
         // textShadowRadius:1,
+    },
+    homeButton: {
+        padding: 20,
+        marginBottom: 5
+    },
+    homeButton2: {
+        marginTop: -5,
+        paddingBottom: 10,
+    },
+    flatlistContainer: {
+        // alignContent: "center",
+        // justifyContent: "center",
+        paddingTop: 10,
+    },
+    titleText: {
+        fontSize: 20,
+        textAlign: "center",
+        fontWeight: "bold",
+    },
+    linkText: {
+        color: 'blue', 
+        fontStyle: 'italic', 
+        textDecorationLine: 'underline',
+        fontSize: 15,
+    },
+    goToRecipe: {
+        padding: 5,
+        paddingBottom: -3,
     },
 })

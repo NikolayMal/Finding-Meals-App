@@ -4,11 +4,11 @@
     "slug": "FindingMeals",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/Finding_Meals-logos_white.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/Finding_Meals-logos_white.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#4CD4CB"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -21,8 +21,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "foregroundImage": "./assets/Finding_Meals-logos_white.png",
+        "backgroundColor": "#4CD4CB"
       }
     },
     "web": {

@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, Keyboard, Button, Modal, Pressable, Alert, ImageBackground, Image } from 'react-native';
 import styles from './styles';
-import { FontAwesome } from "@expo/vector-icons";
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, Ionicons, FontAwesome, Entypo } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { Camera } from "expo-camera";
 
@@ -18,12 +17,16 @@ export default function SearchScreen(props) {
     const [entityText, setEntityText] = useState('')
     const [entities, setEntities] = useState([])
 
+    const [ingrText, setIngrText] = useState('')
+
 
     const entityRef = firebase.firestore().collection('entities')
     const prevRef   = firebase.firestore().collection('previous')
+    const ingrRef =   firebase.firestore().collection('ingrCount')
     const userID = props.extraData.id
 
     const [modalVisible, setModalVisible] = useState(false);
+    const [ingrmodalVisible, setingrmodalVisible] = useState(false);
 
     // Camera
     const [hasPermission, setHasPermission] = useState(null);
@@ -155,9 +158,41 @@ export default function SearchScreen(props) {
             }
         })
       })
-      navigation.navigate('recipe')
+      navigation.navigate('Recipe')
     }
 
+
+    const ingrCount = async() => {
+      // Delete all previous
+      await ingrRef.get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          if (doc.data().authorID === userID) {
+            ingrRef.doc(doc.id).delete()
+          }
+        })
+      })
+
+      if (ingrText && ingrText.length > 0) {
+        const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+        const data = {
+            text: ingrText,
+            authorID: userID,
+            createdAt: timestamp,
+        };
+        ingrRef
+            .add(data)
+            .then(_doc => {
+                setEntityText('')
+                Keyboard.dismiss()
+            })
+            .catch((error) => {
+                alert(error)
+            });
+    }
+      setModalVisible(!modalVisible)
+      setingrmodalVisible(!ingrmodalVisible)
+      uploadImage();  
+    }
 
     const renderEntity = ({item, index}) => {
         return (
@@ -180,6 +215,40 @@ export default function SearchScreen(props) {
     return (
     <>
     <View style={styles.container}>
+      {ingrmodalVisible ? (
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={ingrmodalVisible}
+        onRequestClose={() => {
+          setingrmodalVisible(!ingrmodalVisible);
+      }}>
+        <View style={styles.cameraContainer} >
+        <ImageBackground // Image of background + Retake Image Text
+          source={{ uri: capturedImage && capturedImage.uri }}
+          style={styles.imageBGContainer} >
+        <View style={styles.modalcontainer}>
+          <View style={styles.ingrformContainer}>
+              <TextInput
+                  autoFocus={true}
+                  keyboardType="number-pad"
+                  style={styles.input}
+                  placeholder='How many ingredients?'
+                  placeholderTextColor="#aaaaaa"
+                  onChangeText={(text) => setIngrText(text)}
+                  value={ingrText}
+                  underlineColorAndroid="transparent"
+                  autoCapitalize="none"
+              />
+              <TouchableOpacity style={styles.button} onPress={ingrCount} >
+              <Text style={styles.buttonText} onSubmitEditing={() => {ingrCount(item)}}>Add</Text>
+              </TouchableOpacity>
+          </View>
+        </View>
+        </ImageBackground>
+        </View>
+      </Modal>
+      ) : (
       <Modal
         animationType="slide"
         transparent={true}
@@ -202,7 +271,7 @@ export default function SearchScreen(props) {
                 <Text style={styles.imageRetakeText} > Re-take </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => { uploadImage(); setModalVisible(!modalVisible) }}
+                onPress={() => { setingrmodalVisible(!ingrmodalVisible) }}
                 // onPress={uploadImage}
                 style={styles.imageReTakePicture} >
                 <Text style={styles.imageRetakeText} > Send Image </Text>
@@ -234,12 +303,12 @@ export default function SearchScreen(props) {
       )}
     </View>
       </Modal>
-      <Pressable
-        style={[styles.buttonContainer, styles.buttonText]}
-        onPress={() =>  setModalVisible(true)}
-      >
-        <Text style={styles.textStyle}>Show Modal</Text>
-      </Pressable>
+      )}
+      <View style={styles.loadIngredients}>
+              <Entypo.Button name="camera" backgroundColor="#4CD4CB" onPress={() =>  setModalVisible(true)}>
+                Take a Picture of Ingredients
+              </Entypo.Button>
+          </View>
         <View style={styles.formContainer}>
             <TextInput
                 style={styles.input}
@@ -265,12 +334,11 @@ export default function SearchScreen(props) {
             </View>
             )}
             <View style={styles.submitIngredients}>
-                <Button 
-                onPress={submitIngredients}
-                color="black"
-                title="Save Ingredients.."        
-                >
-                </Button>
+              <View style={styles.loadIngredients}>
+                <Ionicons.Button name="exit-outline" backgroundColor="#4CD4CB" onPress={() => submitIngredients()}>
+                  Save Ingredients
+                </Ionicons.Button>
+              </View>
             </View>
     </View>
     </>    

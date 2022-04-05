@@ -12,7 +12,7 @@ export default function RegistrationScreen({navigation}) {
     const [confirmPassword, setConfirmPassword] = useState('')
 
     const onFooterLinkPress = () => {
-        navigation.navigate('login')
+        navigation.navigate('Login')
     }
 
     const onRegisterPress = () => {
@@ -35,7 +35,7 @@ export default function RegistrationScreen({navigation}) {
                     .doc(uid)
                     .set(data)
                     .then(() => {
-                        navigation.navigate('home', {user: data})
+                        navigation.navigate('Home', {user: data})
                     })
                     .catch((error) => {
                         alert(error)
@@ -53,7 +53,7 @@ export default function RegistrationScreen({navigation}) {
                 keyboardShouldPersistTaps="always">
                 <Image
                     style={styles.logo}
-                    source={require('../../../assets/icon.png')}
+                    source={require('../../../assets/Finding_Meals-logos_black.png')}
                 />
                 <TextInput
                     style={styles.input}

@@ -30,7 +30,7 @@ export default StyleSheet.create({
     button: {
         height: 47,
         borderRadius: 5,
-        backgroundColor: '#788eec',
+        backgroundColor: '#4CD4CB',
         width: 80,
         alignItems: "center",
         justifyContent: 'center'
@@ -38,7 +38,7 @@ export default StyleSheet.create({
     buttonText: {
         textAlign: "center",
         fontSize: 20,
-        color: '#fff',
+        color: '#FFFFFF',
         fontWeight: "bold",
     },
     buttonContainer: {
@@ -79,12 +79,12 @@ export default StyleSheet.create({
     },
     todoIcons:{
         display:'flex',
-        flexDirection:"row"
+        flexDirection:"row",
     },
     todoIcon:{
-        marginTop:5,
-        fontSize:20,
+        fontSize:25,
         marginLeft:10,
+        padding: 10,
     },
     toCameraScreen:{
         position: 'absolute',
@@ -98,7 +98,6 @@ export default StyleSheet.create({
         justifyContent: 'center',
         paddingBottom: 20,
         paddingTop: 10,
-        backgroundColor: '#cccccc',
         width:"100%",
     },
     centeredView: {
@@ -107,7 +106,7 @@ export default StyleSheet.create({
         alignItems: "center",
         marginTop: 22
       },
-      modalView: {
+    modalView: {
         margin: 20,
         backgroundColor: "white",
         borderRadius: 20,
@@ -121,28 +120,28 @@ export default StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5
-      },
-      modalbutton: {
+    },
+    modalbutton: {
         borderRadius: 20,
         padding: 10,
         elevation: 2
-      },
-      buttonOpen: {
-        backgroundColor: "#F194FF",
-      },
-      buttonClose: {
-        backgroundColor: "#2196F3",
-      },
-      textStyle: {
+    },
+    buttonOpen: {
+        backgroundColor: "#4CD4CB",
+    },
+    buttonClose: {
+        backgroundColor: "#4CD4CB",
+    },
+    textStyle: {
         color: "white",
         fontWeight: "bold",
         textAlign: "center"
-      },
-      modalText: {
+    },
+    modalText: {
         marginBottom: 15,
         textAlign: "center"
       },
-      cameraContainer:{
+    cameraContainer:{
         flex: 1,
     },
     imageBGContainer:{
@@ -198,5 +197,33 @@ export default StyleSheet.create({
         position: "absolute",
         top: 30,
         padding: 10,
+    },
+    ingrformContainer: {
+        flexDirection: 'row',
+        height: 10,
+        marginTop: 10,
+        marginBottom: 20,
+        flex: 1,
+        paddingTop: 10,
+        paddingBottom: 10,
+        paddingLeft: 30,
+        paddingRight: 30,
+    },
+    modalcontainer: {
+        position: 'absolute',
+        bottom:0,
+        alignItems: "center",
+        justifyContent: 'center',
+        paddingBottom: 50,
+        paddingTop: 10,
+        width:"100%",
+        top:"50%",
+        bottom:"50%",
+    },
+    loadIngredients: {
+        padding: 15,
+        paddingBottom: -3,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
 })

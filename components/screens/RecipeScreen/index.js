@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, Keyboard, Button, Modal, Pressable, Alert, ImageBackground, ActivityIndicator, Image, ScrollView } from 'react-native';
 import axios from 'axios';
 import { Linking } from 'react-native';
-import { FontAwesome } from "@expo/vector-icons";
-import { AntDesign } from '@expo/vector-icons';
+import { FontAwesome, Ionicons, AntDesign, Entypo } from "@expo/vector-icons";
 import { StatusBar } from 'expo-status-bar';
 
 import styles from './styles'
@@ -13,6 +12,7 @@ import { get } from 'react-native/Libraries/Utilities/PixelRatio';
 import TimeRadioButton from './timeRadioButton';
 import HealthRadioButton from './healthRadioButton'
 import MealRadioButton from './mealRadioButton'
+import { EarlyStopping } from '@tensorflow/tfjs';
 
 
 export default function RecipeScreen (props) {
@@ -109,21 +109,9 @@ export default function RecipeScreen (props) {
         newingreds.push(ingreds)
         console.log("ingr: " + ingreds)
       });
-      setIngr(newingreds)
-      // getRecipes();      
+      setIngr(newingreds)     
     },error => {console.log(error)})
-
-    // setTimeout(() => {
-    //   getRecipes();
-    // }, 5000)
   }, []); 
-
-  function sleep(ms) {
-    console.log("Sleeping for : " + ms )
-    return new Promise((resolve) => {
-      setTimeout(resolve, ms);
-    });
-  }
 
   const getRecipes = async() => {
     console.log("In getRecipes()")
@@ -174,26 +162,18 @@ export default function RecipeScreen (props) {
     return (
     <>
       <View style={styles.entityContainer} >
-      <TextInput style={styles.entityText} blurOnSubmit={false} >
-        {item.recipe.label}   
-      </TextInput>
-      <Image
-        style={{width: 50, height: 50}}
-        source={imageHttpUrl}
-        alt = {item.recipe.label}
+        <Text style={styles.entityText} blurOnSubmit={false} > {item.recipe.label} </Text>
+        <Image
+          style={styles.entityImage}
+          source={imageHttpUrl}
+          alt = {item.recipe.label}
         />
-      <Text 
-        style={{color: 'blue'}}  
-        onPress={() => Linking.openURL(item.recipe.shareAs)} // also can use item.recipe.url
-      >
-        go to recipe...
-     </Text>
-     <Button onPress = {() => setshowIngredients(!showIngredients)} title="Show Ingredients"/>
-
-     {showIngredients && 
-     <Text style={{ color: 'red' }}>{item.recipe.ingredientLines}</Text>
-     }
-     </View>
+        <View style={styles.goToRecipe}>
+          <Ionicons.Button name="exit-outline" backgroundColor="#4CD4CB" onPress={() => Linking.openURL(item.recipe.shareAs)}>
+            Go To Recipe
+          </Ionicons.Button>
+        </View>
+      </View>
     </>
     )
   }
@@ -235,9 +215,11 @@ export default function RecipeScreen (props) {
     <>
       <View style={styles.radioButtonContainer}>
         <ScrollView>
-          <TouchableOpacity
-            onPress={() => setisTimeConstraint(!isTimeConstraint)}
-          ><Text>Time Restraints</Text></TouchableOpacity>
+          <View style={styles.openOptions}>
+          <Entypo.Button name="menu" backgroundColor="#4CD4CB" onPress={() => setisTimeConstraint(!isTimeConstraint)}>
+                Time Constraints
+          </Entypo.Button>
+        </View>
           {isTimeConstraint ? <>
             <TimeRadioButton
             selectedOption={timeselectedOption}
@@ -247,9 +229,11 @@ export default function RecipeScreen (props) {
           </>
           
         : (<></>)}
-        <TouchableOpacity
-          onPress={() => setisHealthConstraint(!isHealthConstraint)}
-        ><Text>Health Options</Text></TouchableOpacity>
+        <View style={styles.openOptions}>
+          <Entypo.Button name="menu" backgroundColor="#4CD4CB" onPress={() => setisHealthConstraint(!isHealthConstraint)}>
+                Health Options
+          </Entypo.Button>
+        </View>
         {isHealthConstraint ? <>
           <HealthRadioButton
             selectedOption={healthselectedOption}
@@ -257,10 +241,11 @@ export default function RecipeScreen (props) {
             options={healthOptions}
           />
         </> : (<></>)}
-        <TouchableOpacity
-          onPress={() => setisMealConstraint(!isMealConstraint)}
-        ><Text>Meal Type</Text>
-        </TouchableOpacity>
+        <View style={styles.openOptions}>
+          <Entypo.Button name="menu" backgroundColor="#4CD4CB" onPress={() => setisMealConstraint(!isMealConstraint)}>
+                Meal Type
+          </Entypo.Button>
+        </View>
         {isMealConstraint ? <>
           <MealRadioButton
             selectedOption={mealselectedOption}
@@ -270,20 +255,19 @@ export default function RecipeScreen (props) {
           
         </> : (<></>)}
       </ScrollView>
-        <Button title="SUBMIT" onPress={onSubmit} />
-        <Button
-          onPress={() => getRecipes()}
-          color="black"
-          title="Load Recipes"        
-        >
-        </Button>
-        
-      </View></> : (
+      </View>
+          <View style={styles.loadIngredients}>
+              <Ionicons.Button name="exit-outline" backgroundColor="#4CD4CB" onPress={() => getRecipes()}>
+                Load Ingredients
+              </Ionicons.Button>
+          </View>
+      </> : (
       <FlatList
-        // horizontal
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
         data={recipes}
         renderItem={renderRecipe}
-        keyExtractor={item => item.id}
+        keyExtractor={(item, index) => index}
         removeClippedSubviews={true}
       />
     )}
