@@ -3,6 +3,7 @@ import { Text, View, FlatList, Image } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import styles from './styles';
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { Linking } from 'react-native';
 
 import { firebase } from '../../fbconfig/config';
 

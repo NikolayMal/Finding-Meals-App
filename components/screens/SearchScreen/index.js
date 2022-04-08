@@ -306,7 +306,7 @@ export default function SearchScreen(props) {
         <View style={styles.formContainer}>
             <TextInput
                 style={styles.input}
-                placeholder='Add new entity'
+                placeholder='Add new ingredient'
                 placeholderTextColor="#aaaaaa"
                 onChangeText={(text) => setEntityText(text)}
                 value={entityText}
